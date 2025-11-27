@@ -2,7 +2,7 @@
 
 ## Features
 - **Multi-language Support**: Full website now supports English, Hindi, and Bengali.
-- **Language Switcher**: Toggle languages instantly from the Navbar.
+- **Language Switcher**: Toggle languages istantly from the Navbar.
 
 ## Technical Changes
 - **Translation System**: 
@@ -16,3 +16,10 @@
 ## How to Run
 1. **Dev Server**: `npm run dev`
 2. **Sync Translations**: `npx tsx scripts/push_translations.ts` (Requires DB schema update first).
+```sql
+ALTER TABLE cancer_docs 
+ADD COLUMN IF NOT EXISTS title_hi TEXT,
+ADD COLUMN IF NOT EXISTS content_hi TEXT,
+ADD COLUMN IF NOT EXISTS title_bn TEXT,
+ADD COLUMN IF NOT EXISTS content_bn TEXT;
+```
