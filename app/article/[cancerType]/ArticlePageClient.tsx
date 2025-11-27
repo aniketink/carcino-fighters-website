@@ -12,7 +12,9 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { Footer } from "@/components/footer";
-import type { ArticleWithAvatar, ArticleSummary } from "@/lib/docsRepository";
+import { useLanguage } from "@/components/LanguageProvider";
+import { useTranslation } from "@/hooks/useTranslation";
+import { ArticleWithAvatar, ArticleSummary } from "@/lib/docsRepository";
 
 interface ArticlePageClientProps {
   article: ArticleWithAvatar;
@@ -20,12 +22,22 @@ interface ArticlePageClientProps {
 }
 
 export function ArticlePageClient({ article, moreArticles }: ArticlePageClientProps) {
+  const { language } = useLanguage();
+  const { t } = useTranslation();
   const [readmore, setReadmore] = useState(false);
   const stickyRef = useRef<HTMLDivElement | null>(null);
   const firstCardRef = useRef<HTMLDivElement | null>(null);
   const [visibleCount, setVisibleCount] = useState(Math.min(3, moreArticles.length));
-  const authorLabel = article.author ?? "Unknown Author";
+  const authorLabel = article.author ?? t.articleDetail.unknownAuthor;
   const positionLabel = article.position ?? "";
+
+  const displayTitle = language === 'hi' ? (article.title_hi || article.title) :
+    language === 'bn' ? (article.title_bn || article.title) :
+      article.title;
+
+  const displayContent = language === 'hi' ? (article.content_hi || article.content) :
+    language === 'bn' ? (article.content_bn || article.content) :
+      article.content;
 
   useEffect(() => {
     if (!stickyRef.current) {
@@ -82,7 +94,7 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
             </div>
             <div className="max-w-4xl sm:px-6">
               <h1 className="text-6xl/25 text-center sm:text-left sm:text-7xl/30 font-wintersolace sm:font-bold text-foreground">
-                {article.title}
+                {displayTitle}
               </h1>
             </div>
             <div className="flex max-sm:w-full flex-row gap-7 items-center sm:pr-15">
@@ -117,9 +129,8 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
           >
             <div className="relative">
               <article
-                className={`prose relative max-w-4xl prose-lg dark:prose-invert prose-headings:font-giest prose-p:font-giest prose-a:text-primary hover:prose-a:text-primary/80 prose-pre:bg-muted prose-pre:text-muted-foreground ${
-                  readmore ? "" : "max-h-[60vh] overflow-hidden"
-                }`}
+                className={`prose relative max-w-4xl prose-lg dark:prose-invert prose-headings:font-giest prose-p:font-giest prose-a:text-primary hover:prose-a:text-primary/80 prose-pre:bg-muted prose-pre:text-muted-foreground ${readmore ? "" : "max-h-[60vh] overflow-hidden"
+                  }`}
               >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -159,12 +170,11 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
                     },
                   }}
                 >
-                  {article.content}
+                  {displayContent}
                 </ReactMarkdown>
                 <div
-                  className={`absolute bottom-0 left-0 right-0 h-[80%] bg-gradient-to-t from-background to-transparent${
-                    readmore ? " hidden" : ""
-                  }`}
+                  className={`absolute bottom-0 left-0 right-0 h-[80%] bg-gradient-to-t from-background to-transparent${readmore ? " hidden" : ""
+                    }`}
                 ></div>
               </article>
               <Button
@@ -173,7 +183,7 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
                 onClick={() => setReadmore((s) => !s)}
                 className={`mx-auto z-10 w-fit my-10 rounded-full bg-primary/44 backdrop-blur-xs cursor-pointer hover:!bg-primary/44 focus:!bg-primary/44 active:!bg-primary/44 transition-none flex items-center gap-2`}
               >
-                {readmore ? "Show less" : "Read more"}
+                {readmore ? t.articleDetail.showLess : t.articleDetail.readMore}
                 <ArrowDown className={`transition-transform ${readmore ? "rotate-180" : ""}`} />
               </Button>
             </div>
@@ -183,7 +193,7 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
               className="sm:ml-auto z-20 flex flex-col gap-4 self-center sm:self-start items-center sticky top-[80px] h-fit max-h-[calc(100vh-169px)]"
             >
               <div className="flex flex-col gap-4">
-                <h2 className="text-center font-geist font-thin text-sm tracking-wide">More Articles</h2>
+                <h2 className="text-center font-geist font-thin text-sm tracking-wide">{t.articleDetail.moreArticles}</h2>
                 {moreArticles.slice(0, visibleCount).map((a, idx) => (
                   <Link key={a.id} href={a.slug ? `/article/${a.slug}` : `/article/${a.id}`} className="text-primary flex items-center gap-1 text-sm">
                     <div ref={idx === 0 ? firstCardRef : undefined} className="w-full">
@@ -192,14 +202,14 @@ export function ArticlePageClient({ article, moreArticles }: ArticlePageClientPr
                           <div className="flex flex-col gap-4 h-full justify-between">
                             <CardItem translateZ="20" className="flex flex-col gap-2 h-full items-center">
                               <div className="text-primary  bg-primary/10 px-2 rounded border-primary border/20 w-fit mb-2 text-xs font-medium">
-                                Research Article
+                                {t.articleList.researchArticle}
                               </div>
                               <h3 className="text-lg font-giest text-foreground mb-1 line-clamp-2">{a.title}</h3>
                               <div className="flex items-center gap-2 mb-2">
-                                <p className="text-muted-foreground text-sm line-clamp-3">Authored by {a.author ?? "Unknown Author"}</p>
+                                <p className="text-muted-foreground text-sm line-clamp-3">{t.home.authoredBy} {a.author ?? t.articleDetail.unknownAuthor}</p>
                               </div>
                               <div className="text-primary flex items-center gap-1 text-sm hover:underline">
-                                Read it
+                                {t.articleDetail.readIt}
                                 <ArrowUpRight size={14} />
                               </div>
                             </CardItem>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import localFont from "next/font/local";
 // import { Footer } from "@/components/footer";
+import { LanguageProvider } from "@/components/LanguageProvider";
 
 
 const geist = Geist({
@@ -12,7 +13,7 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
-const wintersolace= localFont({
+const wintersolace = localFont({
   src: [
     {
       path: "../public/fonts/wintersolace.ttf",
@@ -94,22 +95,23 @@ export default function RootLayout({
         className={`${geist.variable} ${spaceGrotesk.variable} ${cinzel.variable} ${michroma.variable} ${panchang.variable} ${wintersolace.variable} antialiased hide-scrollbar`}>
 
         <ThemeProvider
-        
+
           attribute="class"
           defaultTheme="dark"
           storageKey="theme"
           disableTransitionOnChange
         >
           {/* Liquid glass filter removed as per request */}
-          
-          <Navbar></Navbar>
-          
-          {children}
+          <LanguageProvider>
+            <Navbar></Navbar>
 
-          
+            {children}
+          </LanguageProvider>
+
+
         </ThemeProvider>
       </body>
-      
+
     </html>
   );
 }

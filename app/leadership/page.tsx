@@ -3,6 +3,7 @@ import { easeInOut, motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { ArrowUpRight, LoaderCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Leader = {
   name: string
@@ -23,37 +24,6 @@ type BlobSpec = {
   tone: "primary" | "accent" | "secondary"
 }
 
-const leaders: Leader[] = [
-  {
-    name: "Rajannya Das",
-    title: "Founder & CEO",
-    description:
-      "A science enthusiast who's usually found lifting weights for peace, balancing deadlines with dopamine bike rides, travelling and learning languages. Mitosis deserves a standing ovation— biology said yes.",
-    avatar: "/avatars/rajannya.png",
-  },
-  {
-    name: "Agnihotra Nath",
-    title: "Chief Operating Officer",
-    description:
-      "Head of Student Team at Google. Endless passion for cars, and music. Porsche enthusiast with a sick garage full of fast cars. Keen eye for detail and topped off with sweet ADHD.",
-    avatar: "/avatars/agnihotra.png",
-  },
-  {
-    name: "Anjishnu Dey",
-    title: "Chief Technology Officer",
-    description:
-      "Physicist by soul. Fights bugs, throws hands, hits gym. If it's complex, he's into it. If it's boring, he's out. Obsessed with clean design, clean lifts, and clean wins.",
-    avatar: "/avatars/anjishnu.png",
-  },
-  {
-    name: "Soushree Chakraborty",
-    title: "Chief Research Officer",
-    description:
-      "Fueled by curiosity and a love for new things, she dives headfirst into scientific discovery, artistic creation, and adrenaline-pumping adventures. She's the perfect blend of brains, heart, and thrill-seeker!",
-    avatar: "/avatars/soushree.png",
-  },
-]
-
 const blobSpecs: BlobSpec[] = [
   {
     top: "6%",
@@ -71,7 +41,8 @@ const blobSpecs: BlobSpec[] = [
     left: "48%",
     size: 420,
     opacity: 0.36,
-  duration: 14,
+    duration: 14,
+    duration: 14,
     delay: 1.1,
     focusX: "55%",
     focusY: "45%",
@@ -82,7 +53,7 @@ const blobSpecs: BlobSpec[] = [
     left: "72%",
     size: 380,
     opacity: 0.3,
-  duration: 15,
+    duration: 15,
     delay: 0.6,
     focusX: "55%",
     focusY: "50%",
@@ -93,7 +64,7 @@ const blobSpecs: BlobSpec[] = [
     left: "-12%",
     size: 520,
     opacity: 0.38,
-  duration: 16,
+    duration: 16,
     delay: 1.8,
     focusX: "45%",
     focusY: "55%",
@@ -104,7 +75,7 @@ const blobSpecs: BlobSpec[] = [
     left: "58%",
     size: 460,
     opacity: 0.34,
-  duration: 18,
+    duration: 18,
     delay: 2.1,
     focusX: "60%",
     focusY: "60%",
@@ -115,7 +86,7 @@ const blobSpecs: BlobSpec[] = [
     left: "8%",
     size: 280,
     opacity: 0.28,
-  duration: 10,
+    duration: 10,
     delay: 0.9,
     focusX: "50%",
     focusY: "48%",
@@ -162,128 +133,139 @@ const toneToColor: Record<BlobSpec["tone"], { inner: string; mid: string }> = {
 }
 
 export default function Leadership() {
+  const { t } = useTranslation();
+
+  const leaders: Leader[] = [
+    {
+      name: "Rajannya Das",
+      title: "Founder & CEO",
+      description: t.leadership.rajannyaDesc,
+      avatar: "/avatars/rajannya.png",
+    },
+    {
+      name: "Agnihotra Nath",
+      title: "Chief Operating Officer",
+      description: t.leadership.agnihotraDesc,
+      avatar: "/avatars/agnihotra.png",
+    },
+    {
+      name: "Anjishnu Dey",
+      title: "Chief Technology Officer",
+      description: t.leadership.anjishnuDesc,
+      avatar: "/avatars/anjishnu.png",
+    },
+    {
+      name: "Soushree Chakraborty",
+      title: "Chief Research Officer",
+      description: t.leadership.soushreeDesc,
+      avatar: "/avatars/soushree.png",
+    },
+  ]
+
   return (
     <div className="relative min-h-dvh w-full overflow-hidden bg-black text-white font-giest">
-      {/*
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none -z-10 pt-30 opacity-30 ">
-        <Image
-          src={"/leadership_bg.png"}
-          alt="Leadership"
-          width={1920}
-          height={1080}
-          quality={100}
-          className="object-cover min-w-[200%] sm:min-w-[10%] sm:max-w-[70%] overflow-hidden hidden dark:inline animate-door-open animate-rad "
-        />
-        <div className="sm:hidden absolute inset-0 bg-[#241836]/80" />
-      </div>
-      */}
 
       <div className="pointer-events-none absolute inset-0 z-10">
         {blobSpecs.map((blob, index) => (
-            <motion.span
-              key={`blob-${index}`}
-              className="absolute rounded-[999px] blur-[120px] mix-blend-screen saturate-150"
-              style={{
-                top: blob.top,
-                left: blob.left,
-                width: blob.size,
-                height: blob.size,
-                background: `radial-gradient(ellipse at ${blob.focusX} ${blob.focusY}, ${toneToColor[blob.tone].inner} 0%, ${toneToColor[blob.tone].mid} 40%, transparent 75%)`,
-                opacity: blob.opacity,
-              }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: [blob.opacity * 0.85, blob.opacity, blob.opacity * 0.9, blob.opacity * 0.82, blob.opacity * 0.85],
-                scale: [0.92, 1.14, 0.98, 1.08, 0.92],
-                x: [0, 110, -80, 45, 0],
-                y: [0, -130, 80, -40, 0],
-                rotate: [0, 18, -14, 6, 0],
-              }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{
-                duration: blob.duration,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: blob.delay,
-                repeatType: "loop",
-              }}
-            />
+          <motion.span
+            key={`blob-${index}`}
+            className="absolute rounded-[999px] blur-[120px] mix-blend-screen saturate-150"
+            style={{
+              top: blob.top,
+              left: blob.left,
+              width: blob.size,
+              height: blob.size,
+              background: `radial-gradient(ellipse at ${blob.focusX} ${blob.focusY}, ${toneToColor[blob.tone].inner} 0%, ${toneToColor[blob.tone].mid} 40%, transparent 75%)`,
+              opacity: blob.opacity,
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{
+              opacity: [blob.opacity * 0.85, blob.opacity, blob.opacity * 0.9, blob.opacity * 0.82, blob.opacity * 0.85],
+              scale: [0.92, 1.14, 0.98, 1.08, 0.92],
+              x: [0, 110, -80, 45, 0],
+              y: [0, -130, 80, -40, 0],
+              rotate: [0, 18, -14, 6, 0],
+            }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{
+              duration: blob.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: blob.delay,
+              repeatType: "loop",
+            }}
+          />
         ))}
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-14 px-6 pb-20 pt-32 sm:px-10 lg:px-20">
-          <motion.div
-            className="flex flex-col items-center gap-6 text-center max-w-2xl"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.6 }}
+        <motion.div
+          className="flex flex-col items-center gap-6 text-center max-w-2xl"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.6 }}
+        >
+          <MotionLabel
+            variants={fadeUp}
+            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur-sm"
           >
-            <MotionLabel
-              variants={fadeUp}
-              className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur-sm"
-            >
-              Meet the Team <ArrowUpRight size={18} />
-            </MotionLabel>
-            <motion.h1
-              variants={fadeUp}
-              className="text-3xl font-semibold font-giest sm:text-4xl"
-            >
-              Our Leadership
-            </motion.h1>
-            <motion.p
-              variants={fadeUp}
-              className="text-base leading-relaxed text-zinc-300 sm:text-lg"
-            >
-              A collective of builders, writers, researchers, and operators working in sync to make oncology approachable for every learner. Thoughtful strategy meets warm humanity here.
-            </motion.p>
-          </motion.div>
+            {t.leadership.meetTeam} <ArrowUpRight size={18} />
+          </MotionLabel>
+          <motion.h1
+            variants={fadeUp}
+            className="text-3xl font-semibold font-giest sm:text-4xl"
+          >
+            {t.leadership.title}
+          </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            className="text-base leading-relaxed text-zinc-300 sm:text-lg"
+          >
+            {t.leadership.description}
+          </motion.p>
+        </motion.div>
 
-          <motion.div
-            className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            {leaders.map((leader) => (
-              <motion.article
-                key={leader.name}
-                variants={cardVariants}
-                className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] px-8 py-10 text-white backdrop-blur-[18px] transition-[box-shadow,transform] duration-300"
-              >
-                <motion.div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-full bg-white/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                />
-                <div className="flex flex-col items-center gap-6 text-center">
-                  <Avatar className="h-20 w-20 border border-white/15">
-                    <AvatarImage className="object-cover" src={leader.avatar} />
-                    <AvatarFallback className="flex h-full w-full items-center justify-center bg-white/10">
-                      <LoaderCircle size={18} className="animate-spin text-white/50" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-center gap-1">
-                    <h2 className="text-lg font-semibold">
-                      {leader.name}
-                    </h2>
-                    <p className="text-sm font-medium text-primary">
-                      {leader.title}
-                    </p>
-                  </div>
-                  <p className="text-sm leading-relaxed text-zinc-300">
-                    {leader.description}
+        <motion.div
+          className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          {leaders.map((leader) => (
+            <motion.article
+              key={leader.name}
+              variants={cardVariants}
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] px-8 py-10 text-white backdrop-blur-[18px] transition-[box-shadow,transform] duration-300"
+            >
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-full bg-white/10 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              />
+              <div className="flex flex-col items-center gap-6 text-center">
+                <Avatar className="h-20 w-20 border border-white/15">
+                  <AvatarImage className="object-cover" src={leader.avatar} />
+                  <AvatarFallback className="flex h-full w-full items-center justify-center bg-white/10">
+                    <LoaderCircle size={18} className="animate-spin text-white/50" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-center gap-1">
+                  <h2 className="text-lg font-semibold">
+                    {leader.name}
+                  </h2>
+                  <p className="text-sm font-medium text-primary">
+                    {leader.title}
                   </p>
                 </div>
-              </motion.article>
-            ))}
-          </motion.div>
-        </div>
+                <p className="text-sm leading-relaxed text-zinc-300">
+                  {leader.description}
+                </p>
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
       </div>
+    </div>
   );
 }
-
-/* <shape> */
-
-
-/* Note: backdrop-filter has minimal browser support */

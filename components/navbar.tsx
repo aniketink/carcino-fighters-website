@@ -15,7 +15,8 @@ import { BookOpen, House, Menu, SearchX } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 const ListItem = React.forwardRef<
@@ -23,7 +24,7 @@ const ListItem = React.forwardRef<
   React.ComponentPropsWithoutRef<"a">
 >(({ className, title, children, ...props }, ref) => {
 
-  
+
   return (
     <li>
       <NavigationMenuLink asChild>
@@ -50,14 +51,19 @@ export function Navbar() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation();
+
   const tabs = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/leadership" },
-    { label: "Articles", href: "/article" },
+    { label: t.navbar.home, href: "/" },
+    { label: t.navbar.about, href: "/leadership" },
+    { label: t.navbar.articles, href: "/article" },
   ];
-  const selectedTab = tabs.find(tab =>
+
+  // Helper to find active tab label safely
+  const activeTab = tabs.find(tab =>
     tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href)
-  )?.label ?? "Home";
+  );
+  const selectedTab = activeTab ? activeTab.label : t.navbar.home;
 
   return (
     <div className="">
@@ -70,7 +76,7 @@ export function Navbar() {
             </NavigationMenuItem>
             {/* Tab links with animated pill indicator */}
             {tabs.map(tab => (
-              <NavigationMenuItem key={tab.label} className="relative hover:cursor-pointer">
+              <NavigationMenuItem key={tab.href} className="relative hover:cursor-pointer">
                 <NavigationMenuLink
                   onClick={() => router.push(tab.href)}
                   className={navigationMenuTriggerStyle() + (selectedTab === tab.label ? "transition-colors text-white font-bold" : "")}
@@ -86,7 +92,11 @@ export function Navbar() {
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
+
           </NavigationMenuList>
+          <div className="ml-4">
+            <LanguageSwitcher />
+          </div>
         </NavigationMenu>
       </div>
 
@@ -126,28 +136,31 @@ export function Navbar() {
                 className="object-cover h-full"
               />
             </div>
-            <div className="text-foreground font-cinzel text-lg">Carcino <br /> Foundation</div>
+            <div className="text-foreground font-cinzel text-lg whitespace-pre-line">{t.navbar.logoText.replace(' ', '\n')}</div>
           </div>
           <div className="bg-accent px-5 w-full h-[1px] mb-5"></div>
           <nav className="flex flex-col gap-10 w-full h-full font-giest text-xl">
             <Link onClick={() => setMobileMenuOpen(false)} href="/" className={pathname === "/" ? "text-primary font-bold" : ""}>
               <div className="flex flex-row items-center gap-2">
                 <House size={24} />
-                Home
+                {t.navbar.home}
               </div>
             </Link>
             <Link onClick={() => setMobileMenuOpen(false)} href="/leadership" className={pathname.startsWith("/leadership") ? "text-primary font-bold" : ""}>
               <div className="flex flex-row items-center gap-2">
                 <SearchX size={24} />
-                About
+                {t.navbar.about}
               </div>
             </Link>
             <Link onClick={() => setMobileMenuOpen(false)} href="/article" className={pathname.startsWith("/article") ? "text-primary font-bold" : ""}>
               <div className="flex flex-row items-center gap-2">
                 <BookOpen size={24} />
-                Articles
+                {t.navbar.articles}
               </div>
             </Link>
+            <div className="mt-auto mb-4">
+              <LanguageSwitcher />
+            </div>
           </nav>
           {/* <ModeTogglePhone></ModeTogglePhone> */}
         </div>
@@ -156,6 +169,3 @@ export function Navbar() {
     </div>
   )
 }
-
-
-

@@ -19,6 +19,7 @@ import { motion, MotionConfig, useScroll, useTransform } from "framer-motion";
 import { getAllDocs } from "@/lib/docsRepository";
 // import { useState } from "react";
 import ShinyText from "@/components/ShinyText";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const easeSoft = [0.33, 1, 0.68, 1] as const;
 
@@ -58,6 +59,8 @@ interface Article {
   title: string;
   author: string | null;
   content: string;
+  title_hi?: string | null;
+  title_bn?: string | null;
 }
 
 // interface Position {
@@ -71,6 +74,8 @@ export default function Home() {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const heroRef = React.useRef<HTMLDivElement | null>(null);
   const articlesRef = React.useRef<HTMLDivElement | null>(null);
+  const { t, language } = useTranslation();
+
   // Parallax: move background slower than scroll within hero section
   const { scrollYProgress } = useScroll({
     container: containerRef,
@@ -96,33 +101,6 @@ export default function Home() {
     })();
   }, []);
 
-  // React.useEffect(() => {
-  //   let idleTimer: number | undefined;
-
-  //   const onPointerMove = (e: PointerEvent) => {
-  //     setPosition({ x: e.clientX, y: e.clientY });
-  //     setOpacity(0.6);
-  //     if (idleTimer) window.clearTimeout(idleTimer);
-  //     idleTimer = window.setTimeout(() => setOpacity(0), 1000);
-  //   };
-
-  //   // Detect when the pointer leaves the window (relatedTarget === null)
-  //   const onMouseOut = (e: MouseEvent) => {
-  //     if ((e as MouseEvent).relatedTarget === null) {
-  //       setOpacity(0);
-  //     }
-  //   };
-
-  //   window.addEventListener("pointermove", onPointerMove);
-  //   window.addEventListener("mouseout", onMouseOut);
-
-  //   return () => {
-  //     window.removeEventListener("pointermove", onPointerMove);
-  //     window.removeEventListener("mouseout", onMouseOut);
-  //     if (idleTimer) window.clearTimeout(idleTimer);
-  //   };
-  // }, []);
-
   const featuredArticles = React.useMemo<Article[]>(() => {
     if (articles.length === 0) return [];
     return [...articles].sort(() => Math.random() - 0.5).slice(0, 6);
@@ -133,73 +111,7 @@ export default function Home() {
       ref={containerRef}
       className=" flex flex-col relative lg:block lg:h-screen w-screen overflow-y-scroll overflow-x-hidden items-start gap-20 bg-background"
     >
-      {/* <div
-        className=" hidden sm:inline fixed inset-0 z-100 opacity-0 transition-opacity duration-500 ease-in-out pointer-events-none"
-        style={{
-          opacity,
-          background: `radial-gradient(circle at ${position.x}px ${position.y}px, #471F77, transparent 10%)`,
-        }}
-      /> */}
-
-      {/* Mobile Background */}
-      {/* <div className="h-[40vh] w-full overflow-hidden fixed left-0 right-0 mx-auto top-0 bg-linear-180 rounded-b-full blur-3xl bg-radial-[at_50%_-50%] from-[#F0F0F0] via-primary-foreground to-[#F0F0F0] dark:from-[#2C2C2C] dark:via-[#471F77] dark:to-[#2C2C2C] lg:hidden animate-blob">
-      </div> */}
-
       <MotionConfig transition={{ duration: 1 }}>
-        {/* Main Content */}
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="flex flex-row mb-10 items-center gap-[12rem] justify-start w-full h-fit pt-[68px] lg:pt-0 lg:h-[100vh] lg:px-14 md:px-10 px-6 z-10 snap-center"
-        >
-          <div className="flex flex-col text-center lg:my-auto lg:text-left items-center lg:items-start w-full h-fit lg:max-w-[50%] gap-6">
-            <Image
-              src="/ribbon_phone.png"
-              alt=""
-              width={117.56}
-              height={150.23}
-              quality={100}
-              className="object-cover lg:hidden"
-            />
-            <Label className="border p-3 rounded-full font-space_grotesk text-base text-foreground hidden lg:inline">
-              Let's change the world together!
-            </Label>
-            <ShinyText 
-              text={"Touchdown"}
-              disabled={false}
-              speed={4}
-              className="text-4xl lg:text-4xl xl:text-6xl font-panchang font-semibold"
-            />
-            <p className="text-lg text-muted-foreground font-space_grotesk">
-              With over eight months in development, over six months of writing
-              and refinement and about thirty research articles later, we are
-              finally launching the Articles Tab!
-            </p>
-            <Button
-              asChild
-              variant={`ghost`}
-              className="border hover:scale-[105%] group rounded-full text-white py-5 transition-all duration-300 animate font-giest font-medium "
-            >
-              <Link href="/article" className="">
-                Read Our Documents{" "}
-                <ArrowUpRight className="transition-transform" />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="hidden lg:inline relative h-full w-full">
-            <div className="h-[598px] w-[524px] animate-blob dark:from-0% dark:from-[#2C2C2C] dark:to-[#471F77] from-[#F0F0F0] from-[28%] to-[#D5B0FF] bg-linear-180 blur-[133px] rounded-full absolute top-0 bottom-0 my-auto right-0 left-0 mr-auto"></div>
-            <Image
-              src="/ribbon.png"
-              alt="Cancer"
-              width={385}
-              height={492}
-              quality={100}
-              className="object-cover absolute top-0 bottom-0 my-auto right-0 scale-75 left-17 mr-auto hidden dark:inline"
-            />
-          </div>
-        </motion.div> */}
-
         <motion.div
           ref={heroRef}
           initial="hidden"
@@ -234,7 +146,7 @@ export default function Home() {
             variants={staggerContainer}
           >
             <ShinyText
-              text={"Articles are now live!"}
+              text={t.home.heroTitle}
               disabled={false}
               speed={4}
               className="text-4xl lg:text-5xl text-center xl:text-7xl font-panchang font-bold"
@@ -243,9 +155,7 @@ export default function Home() {
               className="font-space_grotesk text-lg max-sm:px-6 sm:max-w-[35%] w-full text-center"
               variants={fadeUp}
             >
-              At the Carcino Foundation, we believe that everyone should be able
-              to learn about one of the leading causes of human mortality, but
-              in a way everyone can understand.
+              {t.home.heroSubtitle}
             </motion.span>
             <motion.div
               variants={fadeUp}
@@ -259,7 +169,7 @@ export default function Home() {
                 className="px-6 py-5 backdrop-blur-sm border border-foreground/30 bg-foreground/10 rounded-full inset-shadow-[0_0_15px_6px] inset-shadow-foreground/10 hover:scale-[105%] transition-all duration-300 font-giest font-medium"
               >
                 <Link href="/article" className="">
-                  Read Our Documents{" "}
+                  {t.home.readDocuments}{" "}
                   <ArrowUpRight className="transition-transform" />
                 </Link>
               </Button>
@@ -280,21 +190,19 @@ export default function Home() {
             className="border p-3 rounded-full font-space_grotesk text-base text-foreground"
             variants={fadeUp}
           >
-            Research and Development
+            {t.home.researchDevelopment}
           </MotionLabel>
           <motion.h1
             className="text-2xl font-giest text-foreground "
             variants={fadeUp}
           >
-            Our Articles
+            {t.home.ourArticles}
           </motion.h1>
           <motion.p
             className="text-lg text-muted-foreground font-space_grotesk"
             variants={fadeUp}
           >
-            Here's the latest collection of articles we offer, tailored to be
-            understandable by everyone, made with love and care by our Writing
-            Team.
+            {t.home.articlesDesc}
           </motion.p>
           {/* subtle parallax blobs behind the grid */}
 
@@ -325,61 +233,66 @@ export default function Home() {
                   aria-hidden
                 />
                 <span className="font-space_grotesk text-sm text-muted-foreground">
-                  Loading articles...
+                  {t.home.loadingArticles}
                 </span>
               </div>
             ) : articles.length === 0 ? (
               <div className="col-span-full text-center text-lg text-muted-foreground">
-                No articles found.
+                {t.home.noArticles}
               </div>
             ) : (
-              featuredArticles.map((article) => (
-                <motion.div
-                  key={article.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 12 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: { duration: 0.55, ease: easeSoft },
-                    },
-                  }}
-                  layout
-                  whileHover={{ y: -4, scale: 1.015 }}
-                >
-                  <CardContainer className="w-xs sm:w-sm px-4 my-2 overflow-hidden aspect-[3/2]">
-                    <CardBody className="inset-shadow-[0_0_10px_10px] inset-shadow-foreground/2 relative group/card aspect-3/2 bg-background/20 backdrop-blur-sm border-accent w-full h-full rounded-[55px] p-[30px] px-[45px] border">
-                      <div className="flex flex-col gap-4 h-full justify-between">
-                        <Link
-                          href={`/article/${article.slug}`}
-                          className="my-auto"
-                        >
-                          <CardItem
-                            translateZ="20"
-                            className="flex flex-col gap-2 h-full items-center"
+              featuredArticles.map((article) => {
+                const title = language === 'hi' ? article.title_hi : language === 'bn' ? article.title_bn : article.title;
+                const displayTitle = title || article.title;
+
+                return (
+                  <motion.div
+                    key={article.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 12 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 0.55, ease: easeSoft },
+                      },
+                    }}
+                    layout
+                    whileHover={{ y: -4, scale: 1.015 }}
+                  >
+                    <CardContainer className="w-xs sm:w-sm px-4 my-2 overflow-hidden aspect-[3/2]">
+                      <CardBody className="inset-shadow-[0_0_10px_10px] inset-shadow-foreground/2 relative group/card aspect-3/2 bg-background/20 backdrop-blur-sm border-accent w-full h-full rounded-[55px] p-[30px] px-[45px] border">
+                        <div className="flex flex-col gap-4 h-full justify-between">
+                          <Link
+                            href={`/article/${article.slug}`}
+                            className="my-auto"
                           >
-                            <div className="text-primary bg-primary/10 px-2 rounded border-primary border/20 w-fit mb-2 text-xs font-medium">
-                              Research Article
-                            </div>
-                            <h2 className="text-lg lg:text-2xl md:text-xl font-giest text-foreground mb-2 line-clamp-2 text-center">
-                              {article.title}
-                            </h2>
-                            <div className="flex items-center gap-2 mb-2">
-                              <p className="text-muted-foreground text-sm line-clamp-3">
-                                Authored by{" "}
-                                {article.author ?? "Anonymous Author"}
+                            <CardItem
+                              translateZ="20"
+                              className="flex flex-col gap-2 h-full items-center"
+                            >
+                              <div className="text-primary bg-primary/10 px-2 rounded border-primary border/20 w-fit mb-2 text-xs font-medium">
+                                {t.home.researchArticle}
+                              </div>
+                              <h2 className="text-lg lg:text-2xl md:text-xl font-giest text-foreground mb-2 line-clamp-2 text-center">
+                                {displayTitle}
+                              </h2>
+                              <div className="flex items-center gap-2 mb-2">
+                                <p className="text-muted-foreground text-sm line-clamp-3">
+                                  {t.home.authoredBy}{" "}
+                                  {article.author ?? t.home.anonymous}
+                                </p>
+                              </div>
+                              <p className="text-sm text-primary flex flex-row items-center gap-1 font-medium hover:underline justify-center">
+                                {t.home.viewArticle} <ArrowUpRight size={14} />
                               </p>
-                            </div>
-                            <p className="text-sm text-primary flex flex-row items-center gap-1 font-medium hover:underline justify-center">
-                              View Article <ArrowUpRight size={14} />
-                            </p>
-                          </CardItem>
-                        </Link>
-                      </div>
-                    </CardBody>
-                  </CardContainer>
-                </motion.div>
-              ))
+                            </CardItem>
+                          </Link>
+                        </div>
+                      </CardBody>
+                    </CardContainer>
+                  </motion.div>
+                );
+              })
             )}
           </motion.div>
           <motion.div
@@ -394,7 +307,7 @@ export default function Home() {
               className="px-5 py-3 backdrop-blur-sm border border-foreground/30 bg-foreground/10 rounded-full inset-shadow-[0_0_15px_6px] inset-shadow-foreground/10 transition-all duration-300 font-giest font-medium"
             >
               <Link href="/article">
-                Read More Insights <ArrowUpRight />
+                {t.home.readMoreInsights} <ArrowUpRight />
               </Link>
             </Button>
           </motion.div>
@@ -437,20 +350,19 @@ export default function Home() {
             className="border p-3 rounded-full font-space_grotesk text-base text-foreground"
             variants={fadeUp}
           >
-            Why Trust Us
+            {t.home.whyTrustUs}
           </MotionLabel>
           <motion.h1
             className="text-2xl font-giest text-foreground"
             variants={fadeUp}
           >
-            We want everyone to be aware
+            {t.home.trustTitle}
           </motion.h1>
           <motion.p
             className="text-lg text-muted-foreground font-space_grotesk"
             variants={fadeUp}
           >
-            We need the world to realise the threat, and for that we have a
-            plan...
+            {t.home.trustDesc}
           </motion.p>
           <div className="flex flex-row items-center justify-center w-full h-fit">
             <motion.div
@@ -461,85 +373,81 @@ export default function Home() {
               className="grid lg:grid-flow-col lg:grid-rows-2 gap-7 pt-7 max-w-[400px] lg:max-w-[50%] h-fit"
             >
               <motion.div variants={fadeUp}>
-              <Card className="animate-floaty lg:border-0 shadow-none bg-transparent">
-                <CardHeader className="flex flex-col items-center lg:items-start gap-2">
-                <div className="animate-floaty">
-                  <Award />
-                </div>
-                <p className="text-xl lg:text-2xl font-giest">
-                  Verified Research
-                </p>
-                </CardHeader>
-                <CardContent>
-                <p className="font-giest text-muted-foreground text-sm lg:text-lg">
-                  Working with plenty of pioneers in the field of medicine has
-                  helped us bring out the truth behind cancer.
-                </p>
-                </CardContent>
-              </Card>
+                <Card className="animate-floaty lg:border-0 shadow-none bg-transparent">
+                  <CardHeader className="flex flex-col items-center lg:items-start gap-2">
+                    <div className="animate-floaty">
+                      <Award />
+                    </div>
+                    <p className="text-xl lg:text-2xl font-giest">
+                      {t.home.verifiedResearch}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-giest text-muted-foreground text-sm lg:text-lg">
+                      {t.home.verifiedResearchDesc}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
               <motion.div variants={fadeUp}>
-              <Card className="animate-floaty delay-400 lg:border-0 shadow-none bg-transparent">
-                <CardHeader className="flex flex-col items-center lg:items-start gap-1">
-                <div
-                  className="animate-floaty"
-                  style={{ animationDelay: "0.15s" }}
-                >
-                  <CalendarCheck />
-                </div>
-                <p className="text-xl lg:text-2xl font-giest">
-                  Up-to-Date Articles
-                </p>
-                </CardHeader>
-                <CardContent>
-                <p className="font-giest text-muted-foreground lg:text-lg">
-                  From start to finish, all our writers prioritize accuracy,
-                  ensuring up to date facts and studies.
-                </p>
-                </CardContent>
-              </Card>
+                <Card className="animate-floaty delay-400 lg:border-0 shadow-none bg-transparent">
+                  <CardHeader className="flex flex-col items-center lg:items-start gap-1">
+                    <div
+                      className="animate-floaty"
+                      style={{ animationDelay: "0.15s" }}
+                    >
+                      <CalendarCheck />
+                    </div>
+                    <p className="text-xl lg:text-2xl font-giest">
+                      {t.home.upToDate}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-giest text-muted-foreground lg:text-lg">
+                      {t.home.upToDateDesc}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
               <motion.div variants={fadeUp}>
-              <Card className="animate-floaty delay-800 lg:border-0 shadow-none bg-transparent">
-                <CardHeader className="flex flex-col items-center lg:items-start gap-2">
-                <div
-                  className="animate-floaty"
-                  style={{ animationDelay: "0.3s" }}
-                >
-                  <PaintBucket />
-                </div>
-                <p className="text-xl lg:text-2xl font-giest">
-                  Made for Everyone
-                </p>
-                </CardHeader>
-                <CardContent>
-                <p className="font-giest text-muted-foreground lg:text-lg">
-                  We try to keep things simple, to break the language barrier
-                  and improve communication.
-                </p>
-                </CardContent>
-              </Card>
+                <Card className="animate-floaty delay-800 lg:border-0 shadow-none bg-transparent">
+                  <CardHeader className="flex flex-col items-center lg:items-start gap-2">
+                    <div
+                      className="animate-floaty"
+                      style={{ animationDelay: "0.3s" }}
+                    >
+                      <PaintBucket />
+                    </div>
+                    <p className="text-xl lg:text-2xl font-giest">
+                      {t.home.madeForEveryone}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-giest text-muted-foreground lg:text-lg">
+                      {t.home.madeForEveryoneDesc}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
               <motion.div variants={fadeUp}>
-              <Card className="animate-floaty delay-[1200] lg:border-0 shadow-none bg-transparent">
-                <CardHeader className="flex flex-col items-center lg:items-start gap-2">
-                <div
-                  className="animate-floaty"
-                  style={{ animationDelay: "0.45s" }}
-                >
-                  <UserCheck />
-                </div>
-                <p className="text-xl lg:text-2xl font-giest">
-                  Run By Students
-                </p>
-                </CardHeader>
-                <CardContent>
-                <p className="font-giest text-muted-foreground lg:text-lg">
-                  We believe that our generation can beat cancer. And we try
-                  our best to educate our peers.
-                </p>
-                </CardContent>
-              </Card>
+                <Card className="animate-floaty delay-[1200] lg:border-0 shadow-none bg-transparent">
+                  <CardHeader className="flex flex-col items-center lg:items-start gap-2">
+                    <div
+                      className="animate-floaty"
+                      style={{ animationDelay: "0.45s" }}
+                    >
+                      <UserCheck />
+                    </div>
+                    <p className="text-xl lg:text-2xl font-giest">
+                      {t.home.runByStudents}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-giest text-muted-foreground lg:text-lg">
+                      {t.home.runByStudentsDesc}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
             </motion.div>
             <div className="lg:flex flex-col items-center gap-7 max-w-[50%] w-full h-full justify-center hidden">
@@ -563,11 +471,9 @@ export default function Home() {
           <div className="w-full flex flex-row items-center justify-between bg-background/20 border rounded-4xl relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-180 blur-3xl from-[#F0F0FF]/30 via-[#D5B0FF]/30 to-[#F0F0FF]/30 dark:from-[#2C2C2C]/30 dark:via-[#471F77]/30 dark:to-[#2C2C2C]/30"></div>
             <div className="text-whte flex flex-col items-center xl:items-start xl:max-w-[60%] justify-center gap-6 w-full h-fit lg:px-14 md:px-10 px-6 py-10 sm:py-14 md:py-18 lg:py-20 relative z-10">
-              <h1 className="text-5xl">Lets change the world together!</h1>
+              <h1 className="text-5xl">{t.home.ctaTitle}</h1>
               <p className="text-lg">
-                Do you wish to contribute to the cause? Write to us or send us
-                articles, and our Writing Team will work on it and share it with
-                the world.
+                {t.home.ctaDesc}
               </p>
               <div className="flex flex-row gap-3">
                 <Button
@@ -576,7 +482,7 @@ export default function Home() {
                   className="px-6 py-5 backdrop-blur-sm border border-foreground/30 bg-foreground/10 rounded-full inset-shadow-[0_0_15px_6px] inset-shadow-foreground/10 transition-all duration-300 font-giest font-medium"
                 >
                   <Link href="/internship/writer">
-                    Writing Team <ArrowUpRight />
+                    {t.home.writingTeam} <ArrowUpRight />
                   </Link>
                 </Button>
                 <Button
@@ -585,7 +491,7 @@ export default function Home() {
                   className="px-6 py-5 backdrop-blur-sm border border-foreground/30 bg-foreground/10 rounded-full inset-shadow-[0_0_15px_6px] inset-shadow-foreground/10 transition-all duration-300 font-giest font-medium"
                 >
                   <Link href="/internship/tech">
-                    Dev / Design <ArrowUpRight />
+                    {t.home.devDesign} <ArrowUpRight />
                   </Link>
                 </Button>
               </div>

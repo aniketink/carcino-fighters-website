@@ -25,6 +25,10 @@ export interface Article {
   author: string | null;
   content: string;
   position: string | null;
+  title_hi?: string | null;
+  content_hi?: string | null;
+  title_bn?: string | null;
+  content_bn?: string | null;
 }
 
 export interface ArticleWithAvatar extends Article { profilePicture?: string | null }
@@ -36,11 +40,17 @@ export interface ArticleSummary {
   author: string | null;
 }
 
+import { MOCK_ARTICLES } from './mockArticles';
+
 export async function getDocBySlug(slug: string): Promise<Article | null> {
+  // Local mock mode
+  const mockDoc = MOCK_ARTICLES.find(a => a.slug === slug);
+  if (mockDoc) return mockDoc;
+  
   try {
     const { data, error } = await supabase
       .from('cancer_docs')
-      .select('id, slug, title, author, content, position')
+      .select('id, slug, title, author, content, position, title_hi, content_hi, title_bn, content_bn')
       .eq('slug', slug)
       .single();
 
@@ -57,10 +67,14 @@ export async function getDocBySlug(slug: string): Promise<Article | null> {
 }
 
 export async function getDocBySlugWithAvatar(slug: string): Promise<ArticleWithAvatar | null> {
+  // Local mock mode
+  const mockDoc = MOCK_ARTICLES.find(a => a.slug === slug);
+  if (mockDoc) return mockDoc;
+
   try {
     const { data, error } = await supabase
       .from('cancer_docs')
-      .select('id, slug, title, author, content, position')
+      .select('id, slug, title, author, content, position, title_hi, content_hi, title_bn, content_bn')
       .eq('slug', slug)
       .single();
 
@@ -93,10 +107,13 @@ export async function getDocBySlugWithAvatar(slug: string): Promise<ArticleWithA
 }
 
 export async function getAllDocs(): Promise<Article[]> {
+  // Local mock mode
+  if (MOCK_ARTICLES.length > 0) return MOCK_ARTICLES;
+
   try {
     const { data, error } = await supabase
       .from('cancer_docs')
-      .select('id, slug, title, author, content, position')
+      .select('id, slug, title, author, content, position, title_hi, content_hi, title_bn, content_bn')
       .order('title');
 
     if (error) {
@@ -112,10 +129,13 @@ export async function getAllDocs(): Promise<Article[]> {
 }
 
 export async function getAllDocsWithAvatars(): Promise<ArticleWithAvatar[]> {
+  // Local mock mode
+  if (MOCK_ARTICLES.length > 0) return MOCK_ARTICLES;
+
   try {
     const { data, error } = await supabase
       .from('cancer_docs')
-      .select('id, slug, title, author, content, position')
+      .select('id, slug, title, author, content, position, title_hi, content_hi, title_bn, content_bn')
       .order('title');
 
     if (error || !data) { if (error) console.error('Error fetching documents:', error); return [] }
